@@ -1,0 +1,154 @@
+import re
+import requests
+from bs4 import BeautifulSoup
+import datetime
+import common.utils as utils
+from common.database import Database
+import uuid
+from dataclasses import dataclass, field
+from models.games.rawg import Rawg
+
+@dataclass
+class Scrape:
+    
+
+    @classmethod
+    def init_database(cls):
+        while cls.URL:
+            response = requests.get(cls.URL)
+            content = response.content
+            large_soup = BeautifulSoup(content, "html.parser")
+            soups = large_soup.find_all("article")
+
+            for soup in soups:
+                # get category
+                category_elems = soup.findAll("span", {"class": "cat-links"})
+                cat_list = [element.text for element in category_elems]
+                print(cat_list, cls.URL)
+                if cat_list[0] == "Lossless Repack":
+
+                    print("PAGE:", cls.URL)
+                    title_elems = soup.findAll("h3")
+                    title_list = [element for element in title_elems]
+                    print(title_list)
+
+                    # fix no title
+                    if len(title_list) == 0:
+                        continue
+
+                    dirty_title = re.findall(
+                        r"<strong>.+?<", str(title_list[0]))
+                    title = dirty_title[0][8:-1].strip()
+                    print("TITLE:", title)
+
+                    link_elem = soup.findAll("h1", {"class": "entry-title"})
+                    link_list = [element.a['href'] for element in link_elem]
+                    url = link_list[0]
+                    print("LINK:", url)
+
+                    date_elem = soup.findAll("time", {"class": "entry-date"})
+                    date_list = [element['datetime'] for element in date_elem]
+                    entry_date = datetime.datetime.strptime(date_list[0], "%Y-%m-%dT%H:%M:%S%z")
+                    print("DATE:", entry_date)
+
+                    magnet = None
+                    try:
+                        magnet_elem = soup.find(
+                            'a', attrs={'href': re.compile("magnet")})
+                        magnet = magnet_elem.get('href')
+                        print("MAGNET:", magnet)
+                    except:
+                        continue
+
+                    # get img
+                    img_elems = soup.findAll("img", {"class": "alignleft"})
+                    img_list = [element['src'] for element in img_elems]
+                    image = img_list[0]
+                    print("IMG:", image)
+
+                    # get every entry list
+                    gen_elems = soup.findAll("p", {"style": "height: 200px; display: block;"})
+                    gen_list = [element.text for element in gen_elems]
+                    genre_pattern = re.compile(r"(Genres/Tags: .+)")
+                    original_size_pattern = re.compile(
+                        r"(Original Size:\s?.+)")
+                    repack_size_pattern = re.compile(r"(Repack Size:\s?.+)")
+
+                    for item in gen_list:
+
+                        tags = None
+                        try:
+                            match_genre = genre_pattern.search(item)
+                            found_genre = match_genre.group(1)
+                            tags = found_genre.replace(
+                                "Genres/Tags: ", "").split(", ")
+                            print("TAGS:", tags)
+                        except:
+                            pass
+
+                        match_original_size = original_size_pattern.search(
+                            item)
+                        found_original_size = match_original_size.group(1)
+                        match_org_size_int = re.findall(
+                            r"(\d+\.?,?\d?\s?\w{2})", found_original_size)
+
+                        if len(match_org_size_int) == 0:
+                            match_org_size_int = found_original_size[15:-3]
+                            match_org_size_int = utils.roman_to_int(
+                                match_org_size_int)
+                            match_org_size_int = [
+                                str(match_org_size_int) + " GB"]
+
+                        original_size = float(
+                            match_org_size_int[0][:-2].replace(",", ".").replace(" ", "")) if match_org_size_int[0][-2:] == "GB" else float(match_org_size_int[0][:-3])*0.001
+                        print("ORG SIZE:", original_size)
+
+                        match_repack_size = repack_size_pattern.search(item)
+                        found_repack_size = match_repack_size.group(1)
+
+                        match_repack_size_int = re.findall(
+                            r"(\d+\.?\d?\s?\w{2})", found_repack_size)
+
+                        if len(match_repack_size_int) == 0:
+                            match_repack_size_int = found_repack_size[18:-24]
+                            match_repack_size_int = utils.roman_to_int(
+                                match_repack_size_int)
+                            match_repack_size_int = [
+                                str(match_repack_size_int) + " GB"]
+
+                        if len(match_repack_size_int) == 2:
+                            match_repack_size_int[0] = match_repack_size_int[1]
+
+                        repack_size = float(
+                            match_repack_size_int[0][:-3].replace(",", ".")) if match_repack_size_int[0][-2:] == "GB" else float(match_repack_size_int[0][:-3])*0.001
+                        print("REPACK SIZE:", repack_size)
+
+                        print("\n=============================================\n")
+
+                        game = Database.find_one(
+                            cls.collection, {"title": title})
+
+                        stop_scrape = False
+                        if game == None:
+                            print("No game found, adding to db")
+                            _id = uuid.uuid4().hex
+                            cls.push_to_mongo(_id,
+                                              {
+                                                  "_id": _id,
+                                                  "title": title,
+                                                  "tags": tags,
+                                                  "original_size": original_size,
+                                                  "repack_size": repack_size,
+                                                  "magnet": magnet,
+                                                  "image": image,
+                                                  "entry_date": entry_date,
+                                                  "url": url
+                                              })
+                            Rawg(_id=_id, title=title).save_to_mongo()
+                        else:
+                            stop_scrape = True
+            next_url = large_soup.findAll('a', {'class': 'next page-numbers'})
+            if next_url and not stop_scrape:
+                cls.URL = next_url[0].get('href')
+            else:
+                break

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="list-group mb-3"></div>
+{%for game in games%}
+<div class="card list-group-item" style="width: 50rem;">
+  <img src="{{game.rawg.image}}" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">{{game.title}}</h5>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <ul class="list-group">
+        <li class="list-group-item">Title: {{game.title}}</li>
+        <li class="list-group-item">Original Size: {{game.original_size}} GB</li>
+        <li class="list-group-item">Repack Size: {{game.repack_size}} GB</li>
+      </ul>
+    <a href="{{game.magnet}}" class="btn btn-primary">Magnet</a>
+  </div>
+</div>
+
+{%endfor%}
+
+
+
+{% endblock %}
