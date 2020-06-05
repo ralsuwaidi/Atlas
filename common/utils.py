@@ -36,6 +36,13 @@ class Utils:
     def check_hashed_password(password: str, hashed_password:str)->bool:
         print(password, hashed_password)
         return pbkdf2_sha512.verify(password, hashed_password)
+
+    @staticmethod
+    def hash_from_magnet(magnet:str)->str:
+        if "btih:" in magnet:
+            return magnet.split("btih:",1)[1]
+        else:
+            print("not magnet link")
         
 
 if __name__ == "__main__":

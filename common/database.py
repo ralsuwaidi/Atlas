@@ -33,3 +33,7 @@ class Database(object):
     @staticmethod
     def get_random(collection:str, size:int):
         return Database.DATABASE[collection].aggregate([{ "$sample": { "size": size } }])
+
+    @staticmethod
+    def latest(collection:str)->Dict:
+        return Database.DATABASE[collection].find({}).sort([("$natural",-1)]).limit(1)[0]

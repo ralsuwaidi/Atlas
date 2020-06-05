@@ -1,11 +1,13 @@
-import requests
+import datetime
+import pprint
+import uuid
 from dataclasses import dataclass, field
 from difflib import SequenceMatcher
-import pprint
-from typing import List
-import datetime
+from typing import List, Dict
+
+import requests
+
 from models.model import Model
-import uuid
 
 
 @dataclass
@@ -30,10 +32,9 @@ class Rawg(Model):
         else:
             return False
 
-    def init_rawg(self, game_title):
-        print("scraping")
+    def api(self, game_title: str = None):
         parameters = {
-            "search": game_title,
+            "search": game_title or self.title,
             "page_size": 1
         }
         response = requests.get("https://rawg.io/api/games", params=parameters)
@@ -74,7 +75,9 @@ class Rawg(Model):
                 if rating["title"] == "exceptional":
                     self.r_exceptional = rating["percent"]
                 if rating["title"] == "skip":
-                   self.r_skip = rating["percent"]
+                    self.r_skip = rating["percent"]
+
+        return self
 
     def json(self):
         return {
@@ -88,3 +91,6 @@ class Rawg(Model):
             "r_skip": self.r_skip,
             "screenshots": self.screenshots
         }
+
+    def website(self):
+        return f"https://rawg.io/games/{self.api()['slug']}"

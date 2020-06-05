@@ -1,16 +1,11 @@
 # from models.game import Game
-from common.database import Database
-import datetime
 from models.games.game import Game
-from difflib import SequenceMatcher
-from models.games.rawg import Rawg
+from pprint import pprint
+from common.utils import Utils
 
-# game = Game.random()[0]
-# print(game.title)
-# print(game.rawg.title)
-# print(game.json())
+Game.init_database()
 
-
-game = Game.random()[0]
-print(game._id)
-print(game.rawg._id)
+for game in Game.random(3):
+    print(game.magnet)
+    print(game.torrent.hashString)
+    game.torrent.download()

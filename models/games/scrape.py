@@ -24,13 +24,10 @@ class Scrape:
                 # get category
                 category_elems = soup.findAll("span", {"class": "cat-links"})
                 cat_list = [element.text for element in category_elems]
-                print(cat_list, cls.URL)
                 if cat_list[0] == "Lossless Repack":
 
-                    print("PAGE:", cls.URL)
                     title_elems = soup.findAll("h3")
                     title_list = [element for element in title_elems]
-                    print(title_list)
 
                     # fix no title
                     if len(title_list) == 0:
@@ -39,24 +36,20 @@ class Scrape:
                     dirty_title = re.findall(
                         r"<strong>.+?<", str(title_list[0]))
                     title = dirty_title[0][8:-1].strip()
-                    print("TITLE:", title)
 
                     link_elem = soup.findAll("h1", {"class": "entry-title"})
                     link_list = [element.a['href'] for element in link_elem]
                     url = link_list[0]
-                    print("LINK:", url)
 
                     date_elem = soup.findAll("time", {"class": "entry-date"})
                     date_list = [element['datetime'] for element in date_elem]
                     entry_date = datetime.datetime.strptime(date_list[0], "%Y-%m-%dT%H:%M:%S%z")
-                    print("DATE:", entry_date)
 
                     magnet = None
                     try:
                         magnet_elem = soup.find(
                             'a', attrs={'href': re.compile("magnet")})
                         magnet = magnet_elem.get('href')
-                        print("MAGNET:", magnet)
                     except:
                         continue
 
@@ -64,7 +57,6 @@ class Scrape:
                     img_elems = soup.findAll("img", {"class": "alignleft"})
                     img_list = [element['src'] for element in img_elems]
                     image = img_list[0]
-                    print("IMG:", image)
 
                     # get every entry list
                     gen_elems = soup.findAll("p", {"style": "height: 200px; display: block;"})
@@ -82,7 +74,6 @@ class Scrape:
                             found_genre = match_genre.group(1)
                             tags = found_genre.replace(
                                 "Genres/Tags: ", "").split(", ")
-                            print("TAGS:", tags)
                         except:
                             pass
 
@@ -101,7 +92,6 @@ class Scrape:
 
                         original_size = float(
                             match_org_size_int[0][:-2].replace(",", ".").replace(" ", "")) if match_org_size_int[0][-2:] == "GB" else float(match_org_size_int[0][:-3])*0.001
-                        print("ORG SIZE:", original_size)
 
                         match_repack_size = repack_size_pattern.search(item)
                         found_repack_size = match_repack_size.group(1)
@@ -121,16 +111,13 @@ class Scrape:
 
                         repack_size = float(
                             match_repack_size_int[0][:-3].replace(",", ".")) if match_repack_size_int[0][-2:] == "GB" else float(match_repack_size_int[0][:-3])*0.001
-                        print("REPACK SIZE:", repack_size)
 
-                        print("\n=============================================\n")
 
                         game = Database.find_one(
                             cls.collection, {"title": title})
 
                         stop_scrape = False
                         if game == None:
-                            print("No game found, adding to db")
                             _id = uuid.uuid4().hex
                             cls.push_to_mongo(_id,
                                               {
@@ -144,7 +131,7 @@ class Scrape:
                                                   "entry_date": entry_date,
                                                   "url": url
                                               })
-                            Rawg(_id=_id, title=title).save_to_mongo()
+                            Rawg(_id=_id, title=title).api().save_to_mongo()
                         else:
                             stop_scrape = True
             next_url = large_soup.findAll('a', {'class': 'next page-numbers'})

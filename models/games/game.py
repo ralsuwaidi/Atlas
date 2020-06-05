@@ -5,13 +5,14 @@ from typing import Dict, List
 import requests
 from bs4 import BeautifulSoup
 from common.database import Database
-from common import utils
+from common.utils import Utils
 import datetime
 from dataclasses import dataclass, field
 import random
 from models.games.scrape import Scrape
 from models.games.rawg import Rawg
 from models.model import Model
+from models.transmission import Transmission
 
 
 @dataclass()
@@ -31,6 +32,7 @@ class Game(Scrape,Model):
 
     def __post_init__(self, rawg_api=False):
         self.rawg = Rawg.get_by_id(self._id)
+        self.torrent = Transmission(self.magnet)
 
     def json(self):
         return {

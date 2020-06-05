@@ -1,24 +1,59 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="card-columns">
 
-<div class="list-group mb-3"></div>
-{%for game in games%}
-<div class="card list-group-item" style="width: 50rem;">
-  <img src="{{game.rawg.image}}" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">{{game.title}}</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <ul class="list-group">
-        <li class="list-group-item">Title: {{game.title}}</li>
-        <li class="list-group-item">Original Size: {{game.original_size}} GB</li>
-        <li class="list-group-item">Repack Size: {{game.repack_size}} GB</li>
-      </ul>
-    <a href="{{game.magnet}}" class="btn btn-primary">Magnet</a>
+  {%for game in games%}
+
+  <div class="col mb-4">
+    <div class="card h-100">
+      <img src="{{game.image}}" class="card-img-top" onerror="this.onerror=null; this.src='{{game.rawg.image}}'"
+        alt="...">
+      <div class="card-body">
+        <h5 class="card-title">{{game.title}}</h5>
+        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
+          content. This content is a little bit longer.</p>
+
+        <!-- Button  -->
+        <a class="btn btn-primary" href="{{ url_for('games.info', game_id=game._id) }}" role="button">More Info</a>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+          Download
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Game Info</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Repack Size: {{game.repack_size}} GB</p>
+                <p>Original Size: {{game.original_size}} GB</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary" href="{{ url_for('games.download', game_id=game._id) }}"
+                  role="button">Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {%  if game.rawg.release_date %}
+        <p class="card-text"><small class="text-muted">Released: {{game.rawg.release_date.strftime('%Y-%m-%d')}}</small>
+        </p>
+        {% endif %}
+      </div>
+    </div>
   </div>
+
+
+  {% endfor %}
 </div>
-
-{%endfor%}
-
-
 
 {% endblock %}

@@ -42,3 +42,7 @@ class Model(metaclass=ABCMeta):
     @classmethod
     def random(cls, size=1) -> List[T]:
         return [cls(**elem) for elem in Database.get_random(cls.collection, size)]
+
+    @classmethod
+    def latest(cls) -> T:
+        return cls(**Database.latest(cls.collection))
