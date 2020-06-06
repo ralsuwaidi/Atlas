@@ -49,7 +49,8 @@ class Scrape:
 
                     dirty_title = re.findall(
                         r"<strong>.+?<", str(title_list[0]))
-                    title = dirty_title[0][8:-1].strip()
+                    clean_title = dirty_title[0][8:-1].strip()
+                    title = clean_title.replace("&amp;","&")
 
                     link_elem = soup.findAll("h1", {"class": "entry-title"})
                     link_list = [element.a['href'] for element in link_elem]

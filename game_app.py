@@ -9,6 +9,6 @@ import re
 
 Game.init_database()
 
-game = Game.find_one_by("_id", "5d2310492c3a426587c95da542ca87f8")
-game.title = "Halo: The Master Chief Collection"
-game.save_to_mongo()
+for game in Game.all():
+    if "&" in game.title:
+        print(game.title)
