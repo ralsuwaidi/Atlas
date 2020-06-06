@@ -7,13 +7,13 @@
   <div id="carouselExampleControls" class="carousel slide card-img-top" data-ride="carousel">
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img src="{{game.rawg.image}}" class="d-block w-100" alt="...">
+        <img src="{{game.rawg.image}}" style="height: 32.7rem;" class="d-block w-100" alt="...">
       </div>
 
       {% if game.rawg.screenshots[2] %}
       {% for screenshot in game.rawg.screenshots[1:] %}
       <div class="carousel-item">
-        <img src="{{screenshot}}" class="d-block w-100" alt="...">
+        <img src="{{screenshot}}" class="d-block w-100" alt="..." style="height: 32.7rem;">
       </div>
       {% endfor %}
       {% endif %}
@@ -33,8 +33,9 @@
   <!-- Card Body -->
   <div class="card-body">
     <h5 class="card-title">{{game.title}}</h5>
-    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content.
-      This content is a little bit longer.</p>
+    {% if game.description%}
+    <p class="card-text">{{game.description.replace("\n", "<br>") | safe}}</p>
+    {%   endif %}
 
     <!-- Rating  -->
     {% if game.rawg.r_exceptional!='null' %}
@@ -44,7 +45,7 @@
     </div>
     {% endif %}
 
-    {% if game.rawg.r_recommended!='null' %}
+    {% if game.rawg.r_recommended!='null'  %}
     <div class="progress mb-3">
       <div class="progress-bar bg-info" role="progressbar" style="width: {{game.rawg.r_recommended}}%"
         aria-valuenow="{{game.rawg.r_recommended}}" aria-valuemin="0" aria-valuemax="100"></div>

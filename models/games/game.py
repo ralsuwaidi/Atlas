@@ -16,7 +16,7 @@ from models.transmission import Transmission
 
 
 @dataclass()
-class Game(Scrape,Model):
+class Game(Scrape, Model):
     collection: str = field(init=False, default="games")
     URL: str = field(init=False, default="https://fitgirl-repacks.site/")
     title: str
@@ -25,10 +25,11 @@ class Game(Scrape,Model):
     image: str
     url: str
     entry_date: datetime
+    description: str = field(default=None)
     magnet: str = field(repr=False, default=None)
     _id: str = field(default_factory=lambda: uuid.uuid4().hex)
     tags: List = field(default=None)
-    rawg:Rawg = field(default=None)
+    rawg: Rawg = field(default=None)
 
     def __post_init__(self, rawg_api=False):
         self.rawg = Rawg.get_by_id(self._id)
@@ -44,7 +45,8 @@ class Game(Scrape,Model):
             "magnet": self.magnet,
             "image": self.image,
             "entry_date": self.entry_date,
-            "url": self.url
+            "url": self.url,
+            "description": self.description
         }
 
     @classmethod
@@ -54,5 +56,4 @@ class Game(Scrape,Model):
     @classmethod
     def search(cls, value: str):
         return [cls(**elem) for elem in Database.search(cls.collection, value)]
-
 

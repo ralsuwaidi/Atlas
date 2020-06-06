@@ -10,12 +10,33 @@
         alt="...">
       <div class="card-body">
         <h5 class="card-title">{{game.title}}</h5>
-        <p class="card-text">This is a longer card with supporting text below as a natural lead-in to additional
-          content. This content is a little bit longer.</p>
+
+
+        <ul class="list-group mb-3">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Size
+            <span class="badge badge-light">{{game.original_size}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">Repacked
+            <span class="badge badge-light">{{game.repack_size}}</span></li>
+        </ul>
+
+        {% if game.rawg.get_score()!=None %}
+        <div class="progress mb-3">
+          <div class="progress-bar bg-info" role="progressbar" style="width: {{game.rawg.get_score()}}%"
+            aria-valuenow="{{game.rawg.get_score()}}" aria-valuemin="0" aria-valuemax="100"></div>
+          <div class="progress-bar bg-warning" role="progressbar" style="width: {{100-game.rawg.get_score()}}%"
+            aria-valuenow="{{100-game.rawg.get_score()}}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% endif %}
 
         <!-- Button  -->
-        <a class="btn btn-primary" href="{{ url_for('games.info', game_id=game._id) }}" role="button">More Info</a>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+
+        <a class="btn btn-outline-primary" href="{{ url_for('games.info', game_id=game._id) }}" role="button">
+          More Info
+        </a>
+
+        <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
           Download
         </button>
 
@@ -25,14 +46,14 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Game Info</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Download Game</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <p>Repack Size: {{game.repack_size}} GB</p>
-                <p>Original Size: {{game.original_size}} GB</p>
+                <p>Are you sure you want to download?</p>
+                <p>The game will be downloaded to you selected harddrive</p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -53,7 +74,35 @@
   </div>
 
 
+  </nav>
+
   {% endfor %}
+
 </div>
 
-{% endblock %}
+<!-- Pagination -->
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    {% if page-1 ==0 %}
+    <li class="page-item disabled">
+      {%  else %}
+    <li class="page-item">
+      {% endif %}
+      <a class="page-link" href="{{page-1}}">Previous</a></li>
+
+    {% if page-1 >1 %}
+    <li class="page-item"><a class="page-link" href="1">...</a></li>
+    {% endif %}
+
+    {% if page-1 !=0 %}
+    <li class="page-item"><a class="page-link" href="{{page-1}}">{{page-1}}</a></li>
+    {% endif %}
+    <li class="page-item active"><a class="page-link" href="{{page}}">{{page}}</a></li>
+    <li class="page-item"><a class="page-link" href="{{page+1}}">{{page+1}}</a></li>
+    <li class="page-item"><a class="page-link" href="{{page+1}}">...</a></li>
+    <li class="page-item"><a class="page-link" href="{{page+1}}">Next</a></li>
+  </ul>
+
+
+  {% endblock %}

@@ -32,7 +32,7 @@ class Rawg(Model):
         else:
             return False
 
-    def api(self, game_title: str = None):
+    def api(self, game_title: str = None)-> "Rawg":
         parameters = {
             "search": game_title or self.title,
             "page_size": 1
@@ -78,6 +78,27 @@ class Rawg(Model):
                     self.r_skip = rating["percent"]
 
         return self
+
+    def get_score(self) -> int:
+        score_p = 0
+        score_n = 0
+
+        if isinstance(self.r_exceptional, float):
+            score_p+=self.r_exceptional
+        if isinstance(self.r_recommended, float):
+            score_p+=self.r_recommended
+        
+        if isinstance(self.r_meh, float):
+            score_n+=self.r_meh
+        if isinstance(self.r_skip, float):
+            score_n+=self.r_skip
+
+
+        total = score_n+score_p
+        if total==0:
+            return None
+        return int((score_p/total)*100)
+
 
     def json(self):
         return {

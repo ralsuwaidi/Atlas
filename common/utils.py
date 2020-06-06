@@ -43,6 +43,7 @@ class Utils:
             return magnet.split("btih:",1)[1]
         else:
             print("not magnet link")
+            return None
         
 
 if __name__ == "__main__":

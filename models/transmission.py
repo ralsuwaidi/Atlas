@@ -12,9 +12,13 @@ class Transmission:
 
     def __init__(self, magnet):
         self.magnet = magnet
-        self.hashString = Utils.hash_from_magnet(
-            magnet).lower() if magnet is not None else None
-
+        # print(magnet)
+        try:
+            self.hashString = Utils.hash_from_magnet(
+                magnet).lower() 
+        except:
+            self.hashString = None
+            
     def remove_torrent(self):
         Transmission.tc.remove_torrent(self.hashString)
 

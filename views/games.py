@@ -4,10 +4,20 @@ from models.transmission import Transmission
 
 game_blueprint = Blueprint('games', __name__)
 
-@game_blueprint.route('/')
-def index():
-    games = Game.random(6)
+@game_blueprint.route('/random')
+def random():
+    games=Game.random(6)
+
     return render_template('games/index.html', games=games)
+
+@game_blueprint.route('/<int:page>')
+@game_blueprint.route('/')
+def index(page=1):
+    games = Game.all()
+    games.sort(key=lambda x: x.entry_date, reverse=True)
+    games = games[page*6-6:page*6]
+
+    return render_template('games/index.html', games=games, page=page)
 
 
 @game_blueprint.route('/info/<string:game_id>')

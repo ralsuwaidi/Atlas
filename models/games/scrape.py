@@ -11,6 +11,20 @@ from models.games.rawg import Rawg
 @dataclass
 class Scrape:
     
+    def find_description(self):
+        response = requests.get(self.url)
+        content = response.content
+        soup = BeautifulSoup(content, "html.parser")
+        description = soup.find("div", {"class":"su-spoiler-content su-u-clearfix su-u-trim"})
+
+        try:
+            description = description.text
+        except:
+            description = None
+
+        
+        return description
+
 
     @classmethod
     def init_database(cls):
@@ -52,6 +66,7 @@ class Scrape:
                         magnet = magnet_elem.get('href')
                     except:
                         continue
+
 
                     # get img
                     img_elems = soup.findAll("img", {"class": "alignleft"})
@@ -112,6 +127,12 @@ class Scrape:
                         repack_size = float(
                             match_repack_size_int[0][:-3].replace(",", ".")) if match_repack_size_int[0][-2:] == "GB" else float(match_repack_size_int[0][:-3])*0.001
 
+                        description = soup.find("div", {"class":"su-spoiler-content su-u-clearfix su-u-trim"})
+
+                        try:
+                            description = description.text
+                        except:
+                            description = None
 
                         game = Database.find_one(
                             cls.collection, {"title": title})
@@ -119,6 +140,7 @@ class Scrape:
                         stop_scrape = False
                         if game == None:
                             _id = uuid.uuid4().hex
+
                             cls.push_to_mongo(_id,
                                               {
                                                   "_id": _id,
@@ -129,7 +151,8 @@ class Scrape:
                                                   "magnet": magnet,
                                                   "image": image,
                                                   "entry_date": entry_date,
-                                                  "url": url
+                                                  "url": url,
+                                                  "description":description
                                               })
                             Rawg(_id=_id, title=title).api().save_to_mongo()
                         else:
