@@ -27,6 +27,13 @@
                     <a class="nav-item nav-link" href="{{url_for('games.random')}}">Random Games</a>
                 </div>
             </div>
+
+            <form class="form-inline" method="POST">
+                <div class="form-group mx-sm-3 mb-1 mt-1">
+                  <input type="text" class="form-control" id="search" name="search" placeholder="Search">
+                </div>
+              </form>
+
         </nav>
         {% with messages = get_flashed_messages(with_categories=true) %}
         {%if messages %}

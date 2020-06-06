@@ -10,9 +10,12 @@ def random():
 
     return render_template('games/index.html', games=games)
 
-@game_blueprint.route('/<int:page>')
-@game_blueprint.route('/')
+@game_blueprint.route('/<int:page>', methods=['POST','GET'])
+@game_blueprint.route('/', methods=['POST','GET'])
 def index(page=1):
+    if request.method == 'POST':
+        games = Game.search(request.form['search'])
+        return render_template('games/index.html', games=games)
     games = Game.all()
     games.sort(key=lambda x: x.entry_date, reverse=True)
     games = games[page*6-6:page*6]
