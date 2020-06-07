@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="card-columns">
 
   {%for game in games%}
@@ -35,7 +36,6 @@
         <a class="btn btn-outline-primary" href="{{ url_for('games.info', game_id=game._id) }}" role="button">
           More Info
         </a>
-
         <button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
           Download
         </button>
@@ -64,7 +64,7 @@
           </div>
         </div>
 
-
+        <!-- Date -->
         {%  if game.rawg.release_date %}
         <p class="card-text"><small class="text-muted">Released: {{game.rawg.release_date.strftime('%Y-%m-%d')}}</small>
         </p>
@@ -99,10 +99,19 @@
     <li class="page-item"><a class="page-link" href="{{page-1}}">{{page-1}}</a></li>
     {% endif %}
     <li class="page-item active"><a class="page-link" href="{{page}}">{{page}}</a></li>
+    {% if page<total_pages %}
     <li class="page-item"><a class="page-link" href="{{page+1}}">{{page+1}}</a></li>
+    {% endif %}
+    {% if page<total_pages-1 %}
     <li class="page-item"><a class="page-link" href="{{page+1}}">...</a></li>
+    {% endif %}
+    {% if page<total_pages-1 %}
+    <li class="page-item"><a class="page-link" href="{{total_pages}}">{{total_pages}}</a></li>
+    {% endif %}
+    {% if page<total_pages %}
     <li class="page-item"><a class="page-link" href="{{page+1}}">Next</a></li>
+    {% endif %}
   </ul>
-{% endif %}
+  {% endif %}
 
   {% endblock %}

@@ -12,7 +12,29 @@
 <body>
     <div class="content container mt-2">
         <nav class="navbar navbar-light bg-light mb-3 navbar-expand-lg">
+
+
+            {% if downloaded_games%}
+            <form method="POST" id="play">
+                <div class="dropdown">
+                    <a class="btn btn-primary dropdown-toggle mr-3" href="#" role="button" id="dropdownMenuLink"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        PLAY
+                    </a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
+                        {% for game in downloaded_games %}
+                            <button name="exe_loc" type="submit" value="{{game[1]}}"
+                                onclick="document.getElementById('play').submit()"
+                                class="dropdown-item">{{game[0]}}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </form>
+            {% else %}
             <a class="navbar-brand" href="/">Pricing Service</a>
+            {% endif %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
                 aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -30,9 +52,9 @@
 
             <form class="form-inline" method="POST">
                 <div class="form-group mx-sm-3 mb-1 mt-1">
-                  <input type="text" class="form-control" id="search" name="search" placeholder="Search">
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Search">
                 </div>
-              </form>
+            </form>
 
         </nav>
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -59,6 +81,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
         crossorigin="anonymous"></script>
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+              })
+        </script>
 </body>
 
 </html>

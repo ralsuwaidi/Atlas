@@ -77,7 +77,8 @@
     {% endif %}
 
     <!-- Button  -->
-    <a class="btn btn-primary" href="{{game.url}}" role="button">Website</a>
+    <a class="btn btn-outline-primary" href="{{game.url}}" role="button">Website</a>
+    <a class="btn btn-outline-primary" href="http://www.google.com/search?q={{game.title.replace(' ','+')}}+game" role="button">Search Google</a>
     <a class="btn btn-primary" href="{{ url_for('games.download', game_id=game._id) }}" role="button">Download</a>
 
 

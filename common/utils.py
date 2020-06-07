@@ -1,10 +1,14 @@
 import re
 from passlib.hash import pbkdf2_sha512
+import os
+import subprocess
+from typing import List
 
 numeral_map = tuple(zip(
     (1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1),
     ('M', 'CM', 'D', 'CD', 'C', 'XC', 'L', 'XL', 'X', 'IX', 'V', 'IV', 'I')
 ))
+
 
 def int_to_roman(i):
     result = []
@@ -14,6 +18,7 @@ def int_to_roman(i):
         i -= integer * count
     return ''.join(result)
 
+
 def roman_to_int(n):
     i = result = 0
     for integer, numeral in numeral_map:
@@ -22,31 +27,45 @@ def roman_to_int(n):
             i += len(numeral)
     return result
 
+
 class Utils:
     @staticmethod
-    def email_is_valid(email:str) ->bool:
+    def email_is_valid(email: str) -> bool:
         email_address_matcher = re.compile(r'[^@]+@[^@]+\.[^@]+')
         return True if email_address_matcher.match(email) else False
 
     @staticmethod
-    def hash_password(password:str) ->str:
+    def hash_password(password: str) -> str:
         return pbkdf2_sha512.encrypt(password)
 
     @staticmethod
-    def check_hashed_password(password: str, hashed_password:str)->bool:
+    def check_hashed_password(password: str, hashed_password: str) -> bool:
         print(password, hashed_password)
         return pbkdf2_sha512.verify(password, hashed_password)
 
     @staticmethod
-    def hash_from_magnet(magnet:str)->str:
+    def hash_from_magnet(magnet: str) -> str:
         if "btih:" in magnet:
-            return magnet.split("btih:",1)[1]
+            return magnet.split("btih:", 1)[1]
         else:
             print("not magnet link")
             return None
-        
+
+    @staticmethod
+    def get_downloaded_games() -> List:
+        directory = "Z:/transmission/complete/"
+        games = []
+        for item in os.listdir(directory):
+            if "FitGirl" not in item:
+                if os.path.isdir(os.path.join(directory, item)):
+                    for subfolder in os.listdir(directory+"/"+item):
+                        if ".exe" in subfolder and "unins" not in subfolder and "UnityCrash" not in subfolder:
+                            # print(item, "|", subfolder)
+                            games.append([item, directory+item+"/"+subfolder])
+
+        return games
+
 
 if __name__ == "__main__":
 
     print(roman_to_int("LVII.VII"))
-
