@@ -48,6 +48,7 @@ class Utils:
         if "btih:" in magnet:
             return magnet.split("btih:", 1)[1]
         else:
+            print(magnet)
             print("not magnet link")
             return None
 
@@ -55,13 +56,13 @@ class Utils:
     def get_downloaded_games() -> List:
         directory = "Z:/transmission/complete/"
         games = []
-        for item in os.listdir(directory):
-            if "FitGirl" not in item:
-                if os.path.isdir(os.path.join(directory, item)):
-                    for subfolder in os.listdir(directory+"/"+item):
-                        if ".exe" in subfolder and "unins" not in subfolder and "UnityCrash" not in subfolder:
+        for folder in os.listdir(directory):
+            if "FitGirl" not in folder:
+                if os.path.isdir(os.path.join(directory, folder)):
+                    for item in os.listdir(directory+"/"+folder):
+                        if ".exe" in item and "unins" not in item and "UnityCrash" not in item:
                             # print(item, "|", subfolder)
-                            games.append([item, directory+item+"/"+subfolder])
+                            games.append([folder, directory+folder+"/"+item])
 
         return games
 

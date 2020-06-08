@@ -50,7 +50,7 @@ def info(game_id):
 @game_blueprint.route('/download/<string:game_id>')
 def download(game_id):
     Transmission.download_from_id(game_id)
-    flash(f'{Game.find_one_by("_id",game_id).title} has started downloading', 'success')
+    flash(f'{Game.find_one_by("_id",game_id).title} has successfully started downloading', 'success')
     # game = Game.get_by_id(game_id)
     # return render_template('games/download.html', game=game)
     return redirect(url_for('.index'))
