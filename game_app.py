@@ -9,6 +9,4 @@ import re
 
 Game.init_database()
 
-for game in Game.all():
-    if "&" in game.title:
-        print(game.title)
+print(Game.find_one_by("title", "Far Cry: New Dawn – Deluxe Edition"))

@@ -24,8 +24,8 @@ app.register_blueprint(alert_blueprint, url_prefix="/alerts")
 app.register_blueprint(store_blueprint, url_prefix="/stores")
 app.register_blueprint(user_blueprint, url_prefix="/users")
 
-game.Game.init_database()
 app.register_blueprint(game_blueprint, url_prefix="/games")
 
 if __name__ == "__main__":
+    game.Game.init_database()
     app.run(debug=True)
