@@ -6,7 +6,7 @@ import models.games.game as Game
 
 
 class Transmission:
-    IP = '10.67.192.123'
+    IP = '127.0.0.1'
     PORT = 9091
     tc = transmissionrpc.Client(IP, PORT)
 

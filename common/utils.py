@@ -54,7 +54,7 @@ class Utils:
 
     @staticmethod
     def get_downloaded_games() -> List:
-        directory = "Z:/transmission/complete/"
+        directory = "/media/rashed/colossus/transmission/comple"
         games = []
         for folder in os.listdir(directory):
             if "FitGirl" not in folder:
