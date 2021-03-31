@@ -31,6 +31,7 @@ class Scrape:
         while cls.URL:
             response = requests.get(cls.URL)
             content = response.content
+            print(content)
             large_soup = BeautifulSoup(content, "html.parser")
             soups = large_soup.find_all("article")
 

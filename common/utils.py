@@ -54,7 +54,7 @@ class Utils:
 
     @staticmethod
     def get_downloaded_games() -> List:
-        directory = "/media/rashed/colossus/transmission/comple"
+        directory = os.environ.get("TORRENT_DIR")
         games = []
         for folder in os.listdir(directory):
             if "FitGirl" not in folder:
