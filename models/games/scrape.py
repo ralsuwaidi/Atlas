@@ -1,12 +1,21 @@
-import re
-import requests
-from bs4 import BeautifulSoup
 import datetime
-import common.utils as utils
-from common.database import Database
+import re
 import uuid
 from dataclasses import dataclass, field
+
+import common.utils as utils
+from bs4 import BeautifulSoup
+from common.database import Database
 from models.games.rawg import Rawg
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+firefox_options = Options()  
+firefox_options.add_argument("--headless")  
+driver = webdriver.Firefox(options=firefox_options)
 
 @dataclass
 class Scrape:
@@ -29,9 +38,10 @@ class Scrape:
     @classmethod
     def init_database(cls):
         while cls.URL:
-            response = requests.get(cls.URL)
-            content = response.content
-            print(content)
+            driver.get(cls.URL)
+            WebDriverWait(driver, 10). until(EC.presence_of_element_located((By.CLASS_NAME, "entry-title"))) 
+            content = driver.page_source
+
             large_soup = BeautifulSoup(content, "html.parser")
             soups = large_soup.find_all("article")
 
