@@ -32,6 +32,16 @@ services:
     ports:
     - 27017:27017
 
+  mongoclient:
+    image: mongoclient/mongoclient:latest
+    container_name: mongoclient
+    hostname: mongoclient
+    depends_on:
+      - mongodb
+    ports:
+      - 3300:3000
+
+
 
 volumes: 
   transmission: 

@@ -35,7 +35,8 @@ class Rawg(Model):
     def api(self, game_title: str = None)-> "Rawg":
         parameters = {
             "search": game_title or self.title,
-            "page_size": 1
+            "page_size": 1,
+            "key": "4f2aacd4d95649ae90f861ceb1a9c12c"
         }
         response = requests.get("https://rawg.io/api/games", params=parameters)
 

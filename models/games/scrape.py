@@ -7,15 +7,20 @@ import common.utils as utils
 from bs4 import BeautifulSoup
 from common.database import Database
 from models.games.rawg import Rawg
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+import chromedriver_autoinstaller
+from selenium import webdriver
 
-firefox_options = Options()  
-firefox_options.add_argument("--headless")  
-driver = webdriver.Firefox(options=firefox_options)
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--start-maximized")
+chrome_options.add_argument("--headless")
+
+chromedriver_autoinstaller.install()
+driver = webdriver.Chrome(options=chrome_options)
 
 @dataclass
 class Scrape:
@@ -140,7 +145,7 @@ class Scrape:
                             match_repack_size_int[0][:-3].replace(",", ".")) if match_repack_size_int[0][-2:] == "GB" else float(match_repack_size_int[0][:-3])*0.001
 
                         description = soup.find("div", {"class":"su-spoiler-content su-u-clearfix su-u-trim"})
-
+                        print(title)
                         try:
                             description = description.text
                         except:
@@ -152,7 +157,7 @@ class Scrape:
                         stop_scrape = False
                         if game == None:
                             _id = uuid.uuid4().hex
-
+                            print(f'pushing {title} to mongo')
                             cls.push_to_mongo(_id,
                                               {
                                                   "_id": _id,
