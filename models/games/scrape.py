@@ -3,6 +3,7 @@ import re
 import uuid
 from dataclasses import dataclass, field
 
+import requests
 import common.utils as utils
 from bs4 import BeautifulSoup
 from common.database import Database
