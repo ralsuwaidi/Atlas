@@ -2,12 +2,17 @@ import os
 
 from flask import Flask, render_template
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from libs.mailgun import Mailgun
 from views.alerts import alert_blueprint
 from views.stores import store_blueprint
 from views.users import user_blueprint
 from views.games import game_blueprint
 import models.games.game as game
+
 
 app = Flask(__name__)
 app.secret_key = 'rashed'

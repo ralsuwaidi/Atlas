@@ -12,9 +12,9 @@ services:
       # - WHITELIST=iplist #optional
       - HOST_WHITELIST=dnsnane list #optional
     volumes:
-      - transmission:/config
-      - transmission:/downloads
-      - transmission:/watch
+      - ./transmission:/config
+      - ./transmission:/downloads
+      - ./transmission:/watch
     ports:
       - 9091:9091
       - 51413:51413
@@ -22,15 +22,18 @@ services:
     restart: unless-stopped
 
   mongodb:
-    image : mongo
+    image: mongo
     container_name: mongodb
+    hostname: mongodb
     environment:
-    - PUID=1000
-    - PGID=1000
+      - PUID=1000
+      - PGID=1000
     volumes:
-    - mongodb:/data/db
+      - mongodb:/data/db
     ports:
-    - 27017:27017
+      - 27017:27017
+    networks:
+      - atlas_net
 
   mongoclient:
     image: mongoclient/mongoclient:latest
@@ -40,9 +43,15 @@ services:
       - mongodb
     ports:
       - 3300:3000
+    environment:
+      - MONGO_URL=${MONGO_URI}
+    networks:
+      - atlas_net
 
-
-
-volumes: 
-  transmission: 
+volumes:
+  transmission:
   mongodb:
+
+networks:
+  atlas_net:
+    driver: bridge

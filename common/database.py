@@ -1,10 +1,11 @@
 import pymongo
 from typing import Dict, List
+import os
 
 
 class Database(object):
     # URI = "mongodb://127.0.0.1:27017/pricing"
-    URI = "mongodb://127.0.0.1:27017/pricing?authSource=admin"
+    URI = os.getenv('MONGO_URI')
     DATABASE = pymongo.MongoClient(URI).get_database()
 
     @staticmethod
