@@ -1,14 +1,10 @@
 import re
 import uuid
-from typing import Dict, List
+from typing import List
 
-import requests
-from bs4 import BeautifulSoup
 from common.database import Database
-from common.utils import Utils
 import datetime
 from dataclasses import dataclass, field
-import random
 from models.games.scrape import Scrape
 from models.games.rawg import Rawg
 from models.model import Model
